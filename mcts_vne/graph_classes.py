@@ -1,4 +1,4 @@
-from random import expovariate, randint, choice, sample, uniform, shuffle
+from random import expovariate, randint, choice, sample, uniform, shuffle, seed
 import networkx as nx
 
 class Waxman_Graph_Container(object):
