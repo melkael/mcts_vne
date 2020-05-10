@@ -10,8 +10,23 @@ class WaxmanContainerTestCase(unittest.TestCase):
         seed(a=0)
         for iteration in range(5):
             for n_nodes in range(2, 100):
-                    G = Waxman_Graph_Container(n_nodes, 0.2, 0.5)
-                    self.assertTrue(nx.is_connected(G.graph))
+                G = Waxman_Graph_Container(n_nodes, 0.2, 0.5)
+                self.assertTrue(nx.is_connected(G.graph))
     
+    def test_graph_has_n_nodes(self):
+        for iteration in range(5):
+            for n_nodes in range(2, 100):
+                G = Waxman_Graph_Container(n_nodes, 0.2, 0.5)
+                self.assertEqual(G.graph.number_of_nodes(), n_nodes)
+    
+    def test_graph_respects_max_degree(self):
+        for n_nodes in range(2, 100):
+            for max_degree_allowed in range(2, 10):
+                G = Waxman_Graph_Container(n_nodes, 0.2, 0.5, max_degree_allowed)
+                degrees = sorted(G.graph.degree, key=lambda x: x[1], reverse=True)
+                max_degree = degrees[0][1]
+                self.assertLessEqual(max_degree, max_degree_allowed)
+
+
 if __name__ == '__main__':
     unittest.main()
