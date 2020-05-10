@@ -1,4 +1,5 @@
 from random import expovariate, randint, choice, sample, uniform, shuffle, seed
+import matplotlib.pyplot as plt
 import networkx as nx
 
 class Waxman_Graph_Container(object):
@@ -39,6 +40,49 @@ class Waxman_Graph_Container(object):
                     break
                 else:
                     G = self.remove_edge_if_no_disconnection(e, G)    
+            
+            # Maybe removing any adjacent edge disconnects the graph, then one need to handle this by disconnecting 
+            # and then reconnecting the graph with other nodes
+            while G.degree(n) > self.max_degree:
+                edges = list(G.edges(n))
+                shuffle(edges)
+                e = edges.pop()
+                G.remove_edge(e[0], e[1])
+                #Here the graph is disconnected
+                S = [G.subgraph(c).copy() for c in nx.connected_components(G)]
+                #We removed 1 edge from a connected graph so there are only 2 connected components
+                D0 = list(S[0].degree)
+                D1 = list(S[1].degree)
+                #Only keep non-saturated nodes
+                D0 = [deg for deg in D0 if deg[1] < self.max_degree]
+                D1 = [deg for deg in D1 if deg[1] < self.max_degree]
+
+                # handle the case where all nodes in connected components are saturated.
+                # If it's the case they all have a degree > 1 and then one can safely remove one random edge without disconnecting the component
+                # This will then free a degree on two nodes for connecting the components
+                if D0 == []:
+                    edges = list(S[0].edges)
+                    shuffle(edges)
+                    G.remove_edge(edges[0][0], edges[0][1])
+
+                if D1 == []:
+                    edges = list(S[1].edges)
+                    shuffle(edges)
+                    G.remove_edge(edges[0][0], edges[0][1])
+                
+                # We then retry to connect the two components
+                S = [G.subgraph(c).copy() for c in nx.connected_components(G)]
+                D0 = list(S[0].degree)
+                D1 = list(S[1].degree)
+                #Remove nodes that are already saturated from the possible hosts of the new edge
+                D0 = [deg for deg in D0 if deg[1] < self.max_degree]
+                D1 = [deg for deg in D1 if deg[1] < self.max_degree]
+
+                #Connect 2 of the remaining nodes randomly
+                u = choice(D0)[0]
+                v = choice(D1)[0]
+                G.add_edge(u, v)
+
         # here the degrees are mostly below max_degree excepted a few ones.
         # One needs to remove the extra edges (which will disconnect the graph) and then connect the newly-created
         # Connected components between each other without exceeding max_degree
