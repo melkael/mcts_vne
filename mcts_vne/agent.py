@@ -45,6 +45,7 @@ class Agent(object):
         return result, vnr_returned
         
     def acknowledge_vnr_departure(self, vnr):
+        # Currently edge removal is not implemented
         for n in vnr.graph.nodes(data=True):
             host = n[-1]['sn_node']
             self.substrate_network.graph.nodes[host]['cpu_used'] -= n[-1]['cpu']
