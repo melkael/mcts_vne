@@ -44,7 +44,12 @@ class Agent(object):
         print(result)
         return result, vnr_returned
         
-    
+    def acknowledge_vnr_departure(self, vnr):
+        for n in vnr.graph.nodes(data=True):
+            host = n[-1]['sn_node']
+            self.substrate_network.graph.nodes[host]['cpu_used'] -= n[-1]['cpu']
+
+
     def choose_substrate_node_randomly(self, nf):
         return random.choice(list(self.substrate_network.graph.nodes))
 
@@ -58,10 +63,7 @@ def main():
         vnr = VNR()
         result, vnr_returned = agent.embed_vnr(vnr)
         if result == 'success_VNoM':
-            print(vnr_returned.graph.nodes(data=True)) 
-            print()
-            print()
-            print(agent.substrate_network.graph.nodes(data=True))   
+            agent.acknowledge_vnr_departure(vnr_returned)
 
 if __name__ == "__main__":
     main()
