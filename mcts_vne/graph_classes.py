@@ -93,8 +93,10 @@ class Waxman_Graph_Container(object):
         if not(nx.is_connected(graph)):
             graph.add_edge(e[0], e[1])
         return graph
-
-
+    
+    def set_graph(self, graph):
+        self.graph = graph
+        
 class VNR(Waxman_Graph_Container):
     def __init__(self, 
                  beta=0.2, 
