@@ -28,6 +28,9 @@ class Waxman_Graph_Container(object):
             G.add_edge(u, v)
         return G
     
+
+    #Needs refactoring
+    #The good approach is probably to ditch the built-in Waxman graph function for a custom one that already takes max degrees into account
     def reduce_degree(self, G):
         if self.max_degree == float("inf"):
             return G
@@ -82,10 +85,6 @@ class Waxman_Graph_Container(object):
                 u = choice(D0)[0]
                 v = choice(D1)[0]
                 G.add_edge(u, v)
-
-        # here the degrees are mostly below max_degree excepted a few ones.
-        # One needs to remove the extra edges (which will disconnect the graph) and then connect the newly-created
-        # Connected components between each other without exceeding max_degree
         return G
     
     def remove_edge_if_no_disconnection(self, e, graph):

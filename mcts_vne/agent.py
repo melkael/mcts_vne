@@ -36,20 +36,21 @@ class Agent(object):
             self.substrate_network = self.substrate_network_backup
             return 'fail VNoM', None
         
-    def embed_vnr(self, vnr):
+    def VNoM(self, vnr):
         self.initialize_embedding(vnr)
-        result = 'success embedding'
-        while result == 'success embedding':
-            result, vnr_returned = self.embed_current_nf(self.choose_substrate_node_randomly)
-        print(result)
-        return result, vnr_returned
+        result_VNoM = 'success embedding'
+        while result_VNoM == 'success embedding':
+            result_VNoM, vnr_returned = self.embed_current_nf(self.choose_substrate_node_randomly)
+        return result_VNoM, vnr_returned
         
+    def VLiM(self, vnr):
+        None
+
     def acknowledge_vnr_departure(self, vnr):
         # Currently edge removal is not implemented
         for n in vnr.graph.nodes(data=True):
             host = n[-1]['sn_node']
             self.substrate_network.graph.nodes[host]['cpu_used'] -= n[-1]['cpu']
-
 
     def choose_substrate_node_randomly(self, nf):
         return random.choice(list(self.substrate_network.graph.nodes))
@@ -62,7 +63,7 @@ def main():
     vnr_returned = None
     for i in range(1):
         vnr = VNR()
-        result, vnr_returned = agent.embed_vnr(vnr)
+        result, vnr_returned = agent.VNoM(vnr)
         if result == 'success_VNoM':
             agent.acknowledge_vnr_departure(vnr_returned)
 
