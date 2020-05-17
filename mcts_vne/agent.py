@@ -4,6 +4,7 @@ import copy
 import pprint
 import networkx as nx
 from MCF import MCF_vne
+from gurobipy import GRB
 
 class Agent(object):
     def __init__(self, substrate_network):
@@ -87,8 +88,21 @@ class Agent(object):
     # otherwise set it to False to get the minimum cost flow for the given VNR 
     def VLiM_MCF(self, vnr, stressConstraint=False):
         mcf = MCF_vne(vnr, self.substrate_network)
-        return mcf.solve(stressConstraint=stressConstraint)
+        status, dict_solution = mcf.solve(stressConstraint=stressConstraint)
+        if status != GRB.OPTIMAL:
+            self.substrate_network = self.substrate_network_backup
+            return 'fail VLiM', None
 
+        # embed the vnr on the substrate network graph
+        for u, v in dict_solution:
+            print(dict_solution[u, v])
+            for i, j in dict_solution[u, v]:
+                self.substrate_network.graph.edges[i, j]['BW_used'] += dict_solution[u, v][i, j]
+        # add the virtual link's embedding to the vnr (this will be useful later when the vnr leaves the system)
+        for u, v in dict_solution:
+            vnr.graph.edges[u, v]['Virtual link'] = dict_solution[u, v]
+        
+        return 'success VLiM', vnr
     # TODO next
     def acknowledge_vnr_departure(self, vnr):
         # Currently edge removal is not implemented
@@ -102,23 +116,18 @@ class Agent(object):
         while choice in self.already_used_nodes:
             choice = random.choice(list(self.substrate_network.graph.nodes))
         return choice
-
+random.seed(0)
 def main():
     sn = SN()
     agent = Agent(sn)
     vnr_returned = None
-    for i in range(1):
+    for i in range(10):
         vnr = VNR()
         pp = pprint.PrettyPrinter(indent=4)
         result, vnr_returned = agent.VNoM(vnr)
-        status, dict_solution = agent.VLiM_MCF(vnr_returned, True)
+        status, vnr_returned = agent.VLiM_MCF(vnr_returned, False)
         print(status)
-        pp.pprint(dict_solution)
-#        result2, vnr_returned = agent.VLiM_BFS(vnr_returned)
-        #print(agent.substrate_network.graph.edges(data=True))
-        #print
-        #if result == 'success_VNoM':
-        #    agent.acknowledge_vnr_departure(vnr_returned)
+        pp.pprint(list(agent.substrate_network.graph.edges(data=True)))
 
 if __name__ == "__main__": 
     main()

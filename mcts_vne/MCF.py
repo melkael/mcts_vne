@@ -148,7 +148,7 @@ class MCF_vne(object):
         # build the model
         m = gp.Model('netflow')
         # prevent it from writing to stdout
-        m.Params.OutputFlag = 0
+        #m.Params.OutputFlag = 0
         # create variables
         flow = m.addVars(commodities, arcs, obj=cost, name="flow")
 
