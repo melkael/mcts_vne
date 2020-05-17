@@ -95,7 +95,7 @@ class Agent(object):
 
         # embed the vnr on the substrate network graph
         for u, v in dict_solution:
-            print(dict_solution[u, v])
+            #print(dict_solution[u, v])
             for i, j in dict_solution[u, v]:
                 self.substrate_network.graph.edges[i, j]['BW_used'] += dict_solution[u, v][i, j]
         # add the virtual link's embedding to the vnr (this will be useful later when the vnr leaves the system)
@@ -117,17 +117,21 @@ class Agent(object):
             choice = random.choice(list(self.substrate_network.graph.nodes))
         return choice
 random.seed(0)
+
 def main():
+    acc = 0
     sn = SN()
     agent = Agent(sn)
     vnr_returned = None
-    for i in range(10):
+    for i in range(20):
         vnr = VNR()
-        pp = pprint.PrettyPrinter(indent=4)
+        #pp = pprint.PrettyPrinter(indent=4)
         result, vnr_returned = agent.VNoM(vnr)
-        status, vnr_returned = agent.VLiM_MCF(vnr_returned, False)
-        print(status)
-        pp.pprint(list(agent.substrate_network.graph.edges(data=True)))
+        if result == 'success_VNoM':
+            status, vnr_returned = agent.VLiM_MCF(vnr_returned, False)
+            if status == 'success VLiM':
+                acc += 1
+    print("successful embeddings:", acc)
 
 if __name__ == "__main__": 
     main()
