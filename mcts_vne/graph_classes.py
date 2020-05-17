@@ -12,7 +12,7 @@ class Waxman_Graph_Container(object):
         self.graph = self.make_graph()
     
     def make_graph(self):
-        G = nx.waxman_graph(self.n_nodes, self.beta, self.alpha, domain=self.domain)
+        G = nx.waxman_graph(self.n_nodes, self.alpha, self.beta, domain=self.domain)
         #G = nx.cycle_graph(self.n_nodes)
         #G = nx.cycle_graph(self.n_nodes)
         G = self.connect_graph(G)
