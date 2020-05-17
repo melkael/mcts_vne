@@ -13,10 +13,13 @@ class Waxman_Graph_Container(object):
     
     def make_graph(self):
         G = nx.waxman_graph(self.n_nodes, self.beta, self.alpha, domain=self.domain)
+        #G = nx.cycle_graph(self.n_nodes)
+        #G = nx.cycle_graph(self.n_nodes)
         G = self.connect_graph(G)
         G = self.reduce_degree(G)
         #On réduit le degré si besoin
-        
+        #G = nx.circular_ladder_graph(self.n_nodes, create_using=None)
+        #G = nx.connected_watts_strogatz_graph(self.n_nodes, 2, 0.2, tries=100, seed=None)    
         return G
     
     def connect_graph(self, G):
@@ -107,9 +110,11 @@ class VNR(Waxman_Graph_Container):
                  max_degree=3,
                  cpu_need_min=2,
                  cpu_need_max=20,
-                 BW_need_min=0,
+                 BW_need_min=1,
                  BW_need_max=50,
                  domain=(0, 0, 25, 25)):
+
+        self.substrate_edges_used = None
         
         self.cpu_need_min = cpu_need_min
         self.cpu_need_max = cpu_need_max
@@ -139,8 +144,8 @@ class SN(Waxman_Graph_Container):
                  max_degree=5,
                  cpu_capa_min=50,
                  cpu_capa_max=100,
-                 BW_capa_min=0,
-                 BW_capa_max=50,
+                 BW_capa_min=50,
+                 BW_capa_max=100,
                  domain=(0, 0, 25, 25)):
         
         self.cpu_capa_min = cpu_capa_min
