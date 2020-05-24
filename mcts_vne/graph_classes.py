@@ -1,5 +1,5 @@
 from random import expovariate, randint, choice, sample, uniform, shuffle, seed
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import networkx as nx
 
 class Waxman_Graph_Container(object):
@@ -120,10 +120,12 @@ class VNR(Waxman_Graph_Container):
         self.cpu_need_max = cpu_need_max
         self.BW_need_min = BW_need_min
         self.BW_need_max = BW_need_max
-        
+
         super().__init__(randint(n_nodes_min, n_nodes_max), beta, alpha, max_degree)
         self.generate_cpu_needs()
         self.generate_bandwidth_needs()
+
+        self.global_dist_max = uniform(dist_min, dist_max)
     
     def generate_cpu_needs(self):
         for i in range(self.n_nodes):

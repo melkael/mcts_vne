@@ -2,7 +2,7 @@ from graph_classes import VNR, SN
 from pygraphviz import *
 import networkx as nx
 import copy 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 def saveSNImage(sn, img):
@@ -10,8 +10,8 @@ def saveSNImage(sn, img):
     sn = copy.deepcopy(sn)
     
     # graphviz bugs with euclidian positions and w/e we want to see the graph as clearly as possible
-    for node in sn.graph:
-        del sn.graph.nodes[node]['pos']
+    #for node in sn.graph:
+    #    del sn.graph.nodes[node]['pos']
 
     for u,v,d in sn.graph.edges(data=True):
         # set edge labels for graphviz
