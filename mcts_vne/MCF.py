@@ -179,7 +179,7 @@ class MCF_vne(object):
             max_link_usage = m.addVar(name='max_link_usage')
             
             for i, j in arcs:
-                m.addConstr((1/capacity[i, j]) * sum(flow[h, i, j] for h in commodities) <= max_link_usage,
+                m.addConstr((1/(capacity[i, j]+0.00000000000001)) * sum(flow[h, i, j] for h in commodities) <= max_link_usage,
                             "cap[%s, %s]" % (i, j))
             obj.addTerms([len(nodes)], [max_link_usage])
 
@@ -207,8 +207,11 @@ class MCF_vne(object):
 
 
 # if you want to try the methods directly here, from Agent import agent. Comment the mcf import in agent.py to avoid infinite imports 
-'''
-sn = SN(n_nodes_min=22,n_nodes_max=22)
+
+from agent import Agent
+
+random.seed(0)
+sn = SN(n_nodes_min=19,n_nodes_max=19)
 agent = Agent(sn)
 
 vnr_returned = None
@@ -224,4 +227,3 @@ pp.pprint(flow_returned)
 pp.pprint(list(sn.graph.edges(data=True)))
 print(list(vnr_returned.graph.nodes(data=True)))
 print(list(vnr_returned.graph.edges(data=True)))
-'''
